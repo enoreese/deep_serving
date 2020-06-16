@@ -9,6 +9,7 @@ services:
     environment:
       - FLASK_ENV=dev
       - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
     ports:
       - 5000:5000
     volumes:
