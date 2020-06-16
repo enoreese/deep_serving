@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  flask_server:
+    container_name: flask_server
+    restart: always
+    build:
+      context: ./flask_server
+      dockerfile: Dockerfile
+    environment:
+      - FLASK_ENV=dev
+      - FLASK_APP=app.py
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/flask_server
+    depends_on:
+      - image-serving
+    networks:
+      ml-network:
+        aliases:
+          - flask_server
+
+  image-serving:
+    image: docker.io/bitnami/tensorflow-serving:2-debian-10
+    container_name: image-serving
+    ports:
+      - 8500:8500
+      - 8501:8501
+    volumes:
+      - image-serving_data:/bitnami
+      - ./serving/conf:/bitnami/tensorflow-serving/conf/
+      - ./serving/model-data:/bitnami/model-data
+    networks:
+      - ml-network
+
+volumes:
+  ml-db:
+    name: ml-db
+  image-serving_data:
+    driver: local
+
+networks:
+  ml-network:
